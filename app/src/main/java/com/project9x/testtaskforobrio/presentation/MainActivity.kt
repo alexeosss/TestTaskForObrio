@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.project9x.testtaskforobrio.presentation.components.ButtonWithText
 import com.project9x.testtaskforobrio.presentation.components.ExchangeRateCard
+import com.project9x.testtaskforobrio.presentation.components.TransactionHistoryComponent
 import com.project9x.testtaskforobrio.presentation.ui.theme.AppTheme
 import com.project9x.testtaskforobrio.presentation.ui.theme.TestTaskTheme
 
@@ -24,6 +25,7 @@ class MainActivity : ComponentActivity() {
                     .fillMaxSize()
                     .background(AppTheme.colors.backgroundColor), contentAlignment = Alignment.Center){
 
+                    TransactionHistoryComponent(time = "12:30", topic = "groceries", amount = "-345 btc")
                 }
             }
         }
