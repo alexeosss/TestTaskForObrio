@@ -12,8 +12,8 @@ data class Colors (
 
 val darkColorPalette = Colors(
     backgroundColor = Color(0xFF181A21),
-    primaryContentColor = Color(0xFFEAECEF),
-    secondaryContentColor = Color(0xFFF7931A)
+    primaryContentColor = Color(0xFFF7931A),
+    secondaryContentColor = Color(0xFFEAECEF)
 )
 
 val LocalColorProvider = staticCompositionLocalOf<Colors> {
