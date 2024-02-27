@@ -32,13 +32,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.project9x.testtaskforobrio.R
 import com.project9x.testtaskforobrio.presentation.components.ButtonWithText
 import com.project9x.testtaskforobrio.presentation.ui.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun SecondScreen(){
+fun SecondScreen(navController: NavHostController) {
 
     val pattern = remember { Regex("^[1-9]\\d*\$") }
 
