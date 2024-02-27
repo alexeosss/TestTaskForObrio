@@ -1,4 +1,4 @@
-package com.project9x.testtaskforobrio.ui.theme
+package com.project9x.testtaskforobrio.presentation.ui.theme
 
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color

@@ -1,4 +1,4 @@
-package com.project9x.testtaskforobrio.ui.theme
+package com.project9x.testtaskforobrio.presentation.ui.theme
 
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.TextStyle
@@ -36,6 +36,6 @@ val typography = Typography(
     )
 )
 
-val LocalTypographyProvider = staticCompositionLocalOf<com.project9x.testtaskforobrio.ui.theme.Typography> {
+val LocalTypographyProvider = staticCompositionLocalOf<Typography> {
     error("No typography")
 }
