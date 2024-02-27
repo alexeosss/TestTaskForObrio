@@ -36,7 +36,7 @@ import com.project9x.testtaskforobrio.presentation.ui.theme.AppTheme
 @Composable
 fun PopUpDeposit(crossClick: () -> Unit, buttonClick: () -> Unit) {
 
-    val pattern = remember { Regex("^\\d+\$") }
+    val pattern = remember { Regex("^[1-9]\\d*\$") }
 
     val keyboardController = LocalSoftwareKeyboardController.current
 

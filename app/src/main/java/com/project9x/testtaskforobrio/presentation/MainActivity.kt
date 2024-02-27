@@ -13,6 +13,7 @@ import com.project9x.testtaskforobrio.presentation.components.ButtonWithText
 import com.project9x.testtaskforobrio.presentation.components.ExchangeRateCard
 import com.project9x.testtaskforobrio.presentation.components.PopUpDeposit
 import com.project9x.testtaskforobrio.presentation.components.TransactionHistoryComponent
+import com.project9x.testtaskforobrio.presentation.screens.second.SecondScreen
 import com.project9x.testtaskforobrio.presentation.ui.theme.AppTheme
 import com.project9x.testtaskforobrio.presentation.ui.theme.TestTaskTheme
 
@@ -22,11 +23,14 @@ class MainActivity : ComponentActivity() {
         setContent {
             TestTaskTheme {
 
-                Box(modifier = Modifier
-                    .fillMaxSize()
-                    .background(AppTheme.colors.backgroundColor), contentAlignment = Alignment.Center){
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(AppTheme.colors.backgroundColor),
+                    contentAlignment = Alignment.Center
+                ) {
 
-
+                    SecondScreen()
                 }
             }
         }
