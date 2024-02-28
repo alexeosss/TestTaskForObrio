@@ -17,5 +17,8 @@ data class TransactionEntity(
     var category: String,
 
     @ColumnInfo(name = "total")
-    var total: String
+    var total: String,
+
+    @ColumnInfo(name = "balance")
+    var balance: Int
 )

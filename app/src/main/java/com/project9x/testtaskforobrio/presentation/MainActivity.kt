@@ -12,7 +12,9 @@ import com.project9x.testtaskforobrio.presentation.navigation.Navigation
 import com.project9x.testtaskforobrio.presentation.screens.first.FirstScreen
 import com.project9x.testtaskforobrio.presentation.ui.theme.AppTheme
 import com.project9x.testtaskforobrio.presentation.ui.theme.TestTaskTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

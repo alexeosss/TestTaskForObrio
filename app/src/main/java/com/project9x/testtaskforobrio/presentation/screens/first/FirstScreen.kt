@@ -9,10 +9,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,6 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.project9x.testtaskforobrio.R
 import com.project9x.testtaskforobrio.presentation.components.ButtonWithText
@@ -33,7 +36,9 @@ import com.project9x.testtaskforobrio.presentation.navigation.NavigationTree
 import com.project9x.testtaskforobrio.presentation.ui.theme.AppTheme
 
 @Composable
-fun FirstScreen(navController: NavHostController) {
+fun FirstScreen(navController: NavHostController, vm: FirstViewModel = hiltViewModel()) {
+
+    val uiState by vm.uiState.collectAsState()
 
     var isPopUpDepositOpen by remember {
         mutableStateOf(false)
@@ -56,7 +61,7 @@ fun FirstScreen(navController: NavHostController) {
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    ExchangeRateCard(firstText = "1btc", secondText = "56800$")
+                    ExchangeRateCard(firstText = "1btc", secondText = uiState.exchangeRate)
                 }
 
                 Row(
@@ -69,7 +74,7 @@ fun FirstScreen(navController: NavHostController) {
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Text(
-                            text = "1000",
+                            text = uiState.balance.toString(),
                             style = AppTheme.typography.h1,
                             color = AppTheme.colors.primaryContentColor,
                             textAlign = TextAlign.Center
@@ -104,20 +109,28 @@ fun FirstScreen(navController: NavHostController) {
                     .fillMaxWidth(), thickness = 1.dp, color = AppTheme.colors.secondaryContentColor
             )
             LazyColumn(Modifier.weight(5f), horizontalAlignment = Alignment.CenterHorizontally) {
-                item {
-                    Text(
-                        text = "27 february 2024",
-                        style = AppTheme.typography.h3,
-                        color = AppTheme.colors.secondaryContentColor,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(vertical = 10.dp)
-                    )
-                }
-                items(5) {
+//                item {
+//                    Text(
+//                        text = "27 february 2024",
+//                        style = AppTheme.typography.h3,
+//                        color = AppTheme.colors.secondaryContentColor,
+//                        textAlign = TextAlign.Center,
+//                        modifier = Modifier.padding(vertical = 10.dp)
+//                    )
+//                }
+//                items(5) {
+//                    TransactionHistoryComponent(
+//                        time = "12:30",
+//                        topic = "groceries",
+//                        amount = "+356 btc"
+//                    )
+//                }
+
+                items(uiState.listOfTransactions) {
                     TransactionHistoryComponent(
-                        time = "12:30",
-                        topic = "groceries",
-                        amount = "+356 btc"
+                        time = it.unixTime.toString(),
+                        topic = it.category,
+                        amount = it.total
                     )
                 }
 
@@ -134,7 +147,8 @@ fun FirstScreen(navController: NavHostController) {
                         isPopUpDepositOpen = false
                     }, contentAlignment = Alignment.Center) {
                     PopUpDeposit(crossClick = { isPopUpDepositOpen = false }) {
-
+                        isPopUpDepositOpen = false
+                        vm.obtainEvent(FirstScreenEvent.MakeDeposit(depositValue = it.toInt()))
                     }
             }
         }

@@ -51,6 +51,14 @@ fun SecondScreen(navController: NavHostController) {
 
     val keyboardController = LocalSoftwareKeyboardController.current
 
+    val categories = listOf(
+        "groceries", "taxi", "electronics", "restaurant", "other"
+    )
+
+    var categoryValue by remember {
+        mutableStateOf(categories[0])
+    }
+
     Column(
         Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.SpaceAround,

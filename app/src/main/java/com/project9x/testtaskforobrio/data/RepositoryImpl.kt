@@ -6,7 +6,7 @@ import com.project9x.testtaskforobrio.data.db.TransactionEntity
 
 class RepositoryImpl(val localDataSource: LocalDataSource) : Repository {
     override suspend fun getAllTransaction(): List<TransactionEntity> {
-        return localDataSource.getAllTransaction()
+        return localDataSource.getAllTransaction().reversed()
     }
 
     override suspend fun addTransaction(transactionEntity: TransactionEntity) {

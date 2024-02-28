@@ -20,7 +20,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -34,11 +37,15 @@ import com.project9x.testtaskforobrio.presentation.ui.theme.AppTheme
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun PopUpDeposit(crossClick: () -> Unit, buttonClick: () -> Unit) {
+fun PopUpDeposit(crossClick: () -> Unit, buttonClick: (String) -> Unit) {
 
     val pattern = remember { Regex("^[1-9]\\d*\$") }
 
     val keyboardController = LocalSoftwareKeyboardController.current
+
+    var depositValue by remember {
+        mutableStateOf("")
+    }
 
     Card(
         modifier = Modifier.size(300.dp, 280.dp),
@@ -65,10 +72,10 @@ fun PopUpDeposit(crossClick: () -> Unit, buttonClick: () -> Unit) {
             ) {
 
                 OutlinedTextField(
-                    value = "",
+                    value = depositValue,
                     onValueChange = {
                         if (it.isEmpty() || it.matches(pattern)) {
-                            //todo save number
+                            depositValue = it
                         }
                     },
                     modifier = Modifier.size(150.dp, 60.dp),
@@ -77,16 +84,9 @@ fun PopUpDeposit(crossClick: () -> Unit, buttonClick: () -> Unit) {
                         autoCorrect = false
                     ),
                     keyboardActions = KeyboardActions(
-                        onDone = { keyboardController?.hide() },
+                        onDone = { keyboardController?.hide() }
                     ),
                     singleLine = true,
-                    placeholder = {
-                        Text(
-                            text = "0",
-                            color = AppTheme.colors.primaryContentColor,
-                            style = AppTheme.typography.h3
-                        )
-                    },
                     trailingIcon = {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_btc),
@@ -112,10 +112,11 @@ fun PopUpDeposit(crossClick: () -> Unit, buttonClick: () -> Unit) {
                     text = stringResource(id = R.string.deposit),
                     textStyle = AppTheme.typography.h2
                 ) {
-                    buttonClick.invoke()
+                    if (depositValue.isNotEmpty() || depositValue.matches(pattern)) {
+                        buttonClick.invoke(depositValue)
+                    }
+
                 }
-
-
             }
         }
     }
