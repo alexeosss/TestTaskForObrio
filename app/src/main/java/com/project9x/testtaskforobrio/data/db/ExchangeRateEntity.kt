@@ -11,7 +11,7 @@ data class ExchangeRateEntity(
     var id: Int? = null,
 
     @ColumnInfo(name = "time")
-    var unixTime: String,
+    var unixTime: Long,
 
     @ColumnInfo(name = "rate")
     var rate: String
