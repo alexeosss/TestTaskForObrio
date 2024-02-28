@@ -87,8 +87,4 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-scalars:2.5.0")
 
     implementation ("com.google.code.gson:gson:2.10.1")
-
-    val paging_version = "3.2.1"
-    implementation("androidx.paging:paging-runtime-ktx:$paging_version")
-    implementation("androidx.paging:paging-compose:$paging_version")
 }

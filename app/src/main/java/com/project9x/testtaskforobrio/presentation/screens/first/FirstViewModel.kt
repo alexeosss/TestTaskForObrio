@@ -123,7 +123,7 @@ class FirstViewModel @Inject constructor(
 
                     _uiState.update {
                         it.copy(
-                            exchangeRate = "$rate $"
+                            exchangeRate = "$rate"
                         )
                     }
 
