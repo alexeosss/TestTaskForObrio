@@ -5,5 +5,5 @@ import retrofit2.http.GET
 
 interface RemoteDataSource {
     @GET("v1/bpi/currentprice.json")
-    suspend fun getExchangeRateRequest(): JSONObject
+    suspend fun getExchangeRateRequest(): String
 }

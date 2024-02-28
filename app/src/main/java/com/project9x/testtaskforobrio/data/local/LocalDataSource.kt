@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Update
 
 @Dao
 interface LocalDataSource {
@@ -21,8 +20,8 @@ interface LocalDataSource {
     @Insert(onConflict = OnConflictStrategy.IGNORE, entity = ExchangeRateEntity::class)
     fun addTime(exchangeRateEntity: ExchangeRateEntity)
 
-    @Update(onConflict = OnConflictStrategy.IGNORE, entity = ExchangeRateEntity::class)
-    fun updateTime(exchangeRateEntity: ExchangeRateEntity)
 
+    @Query("UPDATE exchange_rate SET time=:unixTime, rate=:rate WHERE currency LIKE :currency")
+    fun updateTime(unixTime: Long, rate: String, currency: String)
 
 }

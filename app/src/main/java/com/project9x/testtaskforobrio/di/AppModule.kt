@@ -22,8 +22,11 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideRepository(localDataSource: LocalDataSource) : Repository {
-        return RepositoryImpl(localDataSource)
+    fun provideRepository(
+        localDataSource: LocalDataSource,
+        remoteDataSource: RemoteDataSource
+    ): Repository {
+        return RepositoryImpl(localDataSource, remoteDataSource)
     }
 
     @Provides
@@ -37,11 +40,10 @@ object AppModule {
     fun provideRemoteDataSource(): RemoteDataSource {
         return Retrofit.Builder()
             .baseUrl("https://api.coindesk.com/")
-//            .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(ScalarsConverterFactory.create())
             .build()
             .create(RemoteDataSource::class.java)
     }
-
 
 
 }

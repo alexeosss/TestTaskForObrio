@@ -2,7 +2,9 @@ package com.project9x.testtaskforobrio.presentation.screens.first
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.project9x.testtaskforobrio.data.Repository
+import com.project9x.testtaskforobrio.data.local.ExchangeRateEntity
 import com.project9x.testtaskforobrio.data.local.TransactionEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -10,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,7 +24,6 @@ class FirstViewModel @Inject constructor(
     val uiState: StateFlow<FirstUiState> = _uiState
 
     init {
-        getTransactions()
         checkExchangeRate()
     }
 
@@ -29,6 +31,10 @@ class FirstViewModel @Inject constructor(
         when (event) {
             is FirstScreenEvent.MakeDeposit -> {
                 makeDeposit(event.depositValue)
+            }
+
+            is FirstScreenEvent.GetTransactionAndBalance -> {
+                getTransactions()
             }
         }
     }
@@ -107,22 +113,57 @@ class FirstViewModel @Inject constructor(
 
     private fun checkExchangeRate() {
         viewModelScope.launch(Dispatchers.IO) {
-            val exchangeRate = repository.getExchangeRate()
 
+            val exchangeRate = repository.getExchangeRate()
             val unixTime = System.currentTimeMillis()
 
             if (exchangeRate != null) {
-                if (unixTime - exchangeRate.unixTime > 3600){
-                    //todo request
+                if (unixTime - exchangeRate.unixTime > 3600000) {
+                    val rate = "${parseExchangeRateRequest(repository.getExchangeRateRequest())} $"
 
-                    //todo update
+                    _uiState.update {
+                        it.copy(
+                            exchangeRate = "$rate $"
+                        )
+                    }
+
+                    repository.updateExchangeRate(
+                        unixTime = unixTime,
+                        rate = rate,
+                        currency = "bitcoin"
+                    )
+                } else {
+                    _uiState.update {
+                        it.copy(
+                            exchangeRate = exchangeRate.rate
+                        )
+                    }
                 }
-            }else{
-                //todo request
+            } else {
+                val rate = "${parseExchangeRateRequest(repository.getExchangeRateRequest())} $"
 
-                //todo add
+                _uiState.update {
+                    it.copy(
+                        exchangeRate = rate
+                    )
+                }
+
+                repository.addExchangeRate(
+                    ExchangeRateEntity(
+                        unixTime = unixTime,
+                        rate = rate,
+                        currency = "bitcoin"
+                    )
+                )
             }
         }
+    }
+
+    private fun parseExchangeRateRequest(exchangeRateRequest: String): String {
+        return Gson().fromJson(
+            exchangeRateRequest,
+            ParsingClass::class.java
+        ).bpi.USD.rate.split(".").first()
     }
 
 }
@@ -134,6 +175,19 @@ data class FirstUiState(
 )
 
 sealed interface FirstScreenEvent {
-    class MakeDeposit(val depositValue: Int) : FirstScreenEvent
 
+    data object GetTransactionAndBalance : FirstScreenEvent
+    class MakeDeposit(val depositValue: Int) : FirstScreenEvent
 }
+
+data class ParsingClass(
+    val bpi: Bpi
+)
+
+data class Bpi(
+    val USD: USD
+)
+
+data class USD(
+    val rate: String
+)

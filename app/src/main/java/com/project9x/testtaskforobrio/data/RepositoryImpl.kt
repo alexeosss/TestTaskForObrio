@@ -4,7 +4,6 @@ import com.project9x.testtaskforobrio.data.local.ExchangeRateEntity
 import com.project9x.testtaskforobrio.data.local.LocalDataSource
 import com.project9x.testtaskforobrio.data.local.TransactionEntity
 import com.project9x.testtaskforobrio.data.remote.RemoteDataSource
-import org.json.JSONObject
 
 class RepositoryImpl(val localDataSource: LocalDataSource, val remoteDataSource: RemoteDataSource) : Repository {
     override suspend fun getAllTransaction(): List<TransactionEntity> {
@@ -23,11 +22,11 @@ class RepositoryImpl(val localDataSource: LocalDataSource, val remoteDataSource:
         return localDataSource.addTime(exchangeRateEntity)
     }
 
-    override suspend fun updateExchangeRate(exchangeRateEntity: ExchangeRateEntity) {
-        localDataSource.updateTime(exchangeRateEntity)
+    override suspend fun updateExchangeRate(unixTime: Long, rate: String, currency: String) {
+        localDataSource.updateTime(unixTime, rate, currency)
     }
 
-    override suspend fun getExchangeRateRequest(): JSONObject {
+    override suspend fun getExchangeRateRequest(): String {
         return remoteDataSource.getExchangeRateRequest()
     }
 

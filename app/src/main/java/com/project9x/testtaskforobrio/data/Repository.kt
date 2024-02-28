@@ -14,9 +14,9 @@ interface Repository {
 
     suspend fun addExchangeRate(exchangeRateEntity: ExchangeRateEntity)
 
-    suspend fun updateExchangeRate(exchangeRateEntity: ExchangeRateEntity)
+    suspend fun updateExchangeRate(unixTime: Long, rate: String, currency: String)
 
-    suspend fun getExchangeRateRequest(): JSONObject
+    suspend fun getExchangeRateRequest(): String
 
 
 

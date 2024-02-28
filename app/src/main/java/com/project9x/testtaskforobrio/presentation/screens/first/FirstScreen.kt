@@ -14,6 +14,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,6 +44,10 @@ fun FirstScreen(navController: NavHostController, vm: FirstViewModel = hiltViewM
     var isPopUpDepositOpen by remember {
         mutableStateOf(false)
     }
+
+    LaunchedEffect(key1 = Unit, block = {
+        vm.obtainEvent(FirstScreenEvent.GetTransactionAndBalance)
+    })
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(

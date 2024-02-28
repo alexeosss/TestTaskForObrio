@@ -10,6 +10,9 @@ data class ExchangeRateEntity(
     @ColumnInfo(name = "id")
     var id: Int? = null,
 
+    @ColumnInfo(name = "currency")
+    var currency: String,
+
     @ColumnInfo(name = "time")
     var unixTime: Long,
 
