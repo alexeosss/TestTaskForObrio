@@ -33,6 +33,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.project9x.testtaskforobrio.R
 import com.project9x.testtaskforobrio.presentation.components.ButtonWithText
@@ -41,7 +42,7 @@ import com.project9x.testtaskforobrio.presentation.ui.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun SecondScreen(navController: NavHostController) {
+fun SecondScreen(navController: NavHostController, vm: SecondViewModel = hiltViewModel()) {
 
     BackHandler {
         navController.popBackStack(route = NavigationTree.FirstScreen.name, inclusive = false)
@@ -57,6 +58,10 @@ fun SecondScreen(navController: NavHostController) {
 
     var categoryValue by remember {
         mutableStateOf(categories[0])
+    }
+
+    var transactionAmount by remember {
+        mutableStateOf("")
     }
 
     Column(
@@ -77,8 +82,10 @@ fun SecondScreen(navController: NavHostController) {
 
             OutlinedTextField(
                 label = { Text(text = "category") },
-                value = "groceries",
-                onValueChange = {},
+                value = categoryValue,
+                onValueChange = {
+                    categoryValue = it
+                },
                 readOnly = true,
                 modifier = Modifier.menuAnchor(),
                 trailingIcon = {
@@ -107,52 +114,33 @@ fun SecondScreen(navController: NavHostController) {
                 onDismissRequest = { isExpanded = false },
                 modifier = Modifier.background(AppTheme.colors.backgroundColor)
             ) {
-                DropdownMenuItem(
-                    modifier = Modifier
-                        .size(160.dp, 60.dp)
-                        .border(
-                            1.dp,
-                            AppTheme.colors.primaryContentColor,
-                            OutlinedTextFieldDefaults.shape
-                        ),
-                    text = { Text(text = "1234") },
-                    onClick = { isExpanded = false },
-                    colors = MenuDefaults.itemColors(textColor = AppTheme.colors.primaryContentColor),
-                )
-                DropdownMenuItem(
-                    modifier = Modifier
-                        .size(160.dp, 60.dp)
-                        .border(
-                            1.dp,
-                            AppTheme.colors.primaryContentColor,
-                            OutlinedTextFieldDefaults.shape
-                        ),
-                    text = { Text(text = "1234") },
-                    onClick = { isExpanded = false },
-                    colors = MenuDefaults.itemColors(textColor = AppTheme.colors.primaryContentColor),
-                )
-                DropdownMenuItem(
-                    modifier = Modifier
-                        .size(160.dp, 60.dp)
-                        .border(
-                            1.dp,
-                            AppTheme.colors.primaryContentColor,
-                            OutlinedTextFieldDefaults.shape
-                        ),
-                    text = { Text(text = "1234") },
-                    onClick = { isExpanded = false },
-                    colors = MenuDefaults.itemColors(textColor = AppTheme.colors.primaryContentColor),
-                )
+                categories.forEach {
+                    DropdownMenuItem(
+                        modifier = Modifier
+                            .size(160.dp, 60.dp)
+                            .border(
+                                1.dp,
+                                AppTheme.colors.primaryContentColor,
+                                OutlinedTextFieldDefaults.shape
+                            ),
+                        text = { Text(text = it) },
+                        onClick = {
+                            isExpanded = false
+                            categoryValue = it
+                        },
+                        colors = MenuDefaults.itemColors(textColor = AppTheme.colors.primaryContentColor),
+                    )
+                }
             }
 
 
         }
 
         OutlinedTextField(
-            value = "",
+            value = transactionAmount,
             onValueChange = {
                 if (it.isEmpty() || it.matches(pattern)) {
-                    //todo save number
+                    transactionAmount = it
                 }
             },
             modifier = Modifier.size(150.dp, 60.dp),
@@ -164,13 +152,6 @@ fun SecondScreen(navController: NavHostController) {
                 onDone = { keyboardController?.hide() },
             ),
             singleLine = true,
-            placeholder = {
-                Text(
-                    text = "0",
-                    color = AppTheme.colors.primaryContentColor,
-                    style = AppTheme.typography.h3
-                )
-            },
             trailingIcon = {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_btc),
@@ -196,7 +177,13 @@ fun SecondScreen(navController: NavHostController) {
             text = stringResource(id = R.string.add),
             textStyle = AppTheme.typography.h1
         ) {
-
+            if (transactionAmount.isNotEmpty() && transactionAmount.matches(pattern)) {
+                vm.obtainEvent(SecondScreenEvent.AddTransaction(transactionAmount, categoryValue))
+                navController.popBackStack(
+                    route = NavigationTree.FirstScreen.name,
+                    inclusive = false
+                )
+            }
         }
     }
 }

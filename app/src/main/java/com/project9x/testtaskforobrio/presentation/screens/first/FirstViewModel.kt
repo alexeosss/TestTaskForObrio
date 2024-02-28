@@ -3,7 +3,7 @@ package com.project9x.testtaskforobrio.presentation.screens.first
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.project9x.testtaskforobrio.data.Repository
-import com.project9x.testtaskforobrio.data.db.TransactionEntity
+import com.project9x.testtaskforobrio.data.local.TransactionEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,6 +22,7 @@ class FirstViewModel @Inject constructor(
 
     init {
         getTransactions()
+        checkExchangeRate()
     }
 
     fun obtainEvent(event: FirstScreenEvent) {
@@ -53,17 +54,17 @@ class FirstViewModel @Inject constructor(
                 )
                 _uiState.update { it2 ->
 
-                    val newListOfTransactions = uiState.value.listOfTransactions.toMutableList().also {
-                        it3 ->
-                        it3.add(
-                            0, TransactionEntity(
-                                unixTime = unixTime,
-                                category = "deposit",
-                                total = "+$depositValue btc",
-                                balance = newBalance
+                    val newListOfTransactions =
+                        uiState.value.listOfTransactions.toMutableList().also { it3 ->
+                            it3.add(
+                                0, TransactionEntity(
+                                    unixTime = unixTime,
+                                    category = "deposit",
+                                    total = "+$depositValue btc",
+                                    balance = newBalance
+                                )
                             )
-                        )
-                    }
+                        }
 
                     it2.copy(
                         balance = newBalance,
@@ -102,6 +103,26 @@ class FirstViewModel @Inject constructor(
         }
 
 
+    }
+
+    private fun checkExchangeRate() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val exchangeRate = repository.getExchangeRate()
+
+            val unixTime = System.currentTimeMillis()
+
+            if (exchangeRate != null) {
+                if (unixTime - exchangeRate.unixTime > 3600){
+                    //todo request
+
+                    //todo update
+                }
+            }else{
+                //todo request
+
+                //todo add
+            }
+        }
     }
 
 }

@@ -1,4 +1,4 @@
-package com.project9x.testtaskforobrio.data.db
+package com.project9x.testtaskforobrio.data.local
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

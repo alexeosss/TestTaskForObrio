@@ -1,7 +1,8 @@
 package com.project9x.testtaskforobrio.data
 
-import com.project9x.testtaskforobrio.data.db.ExchangeRateEntity
-import com.project9x.testtaskforobrio.data.db.TransactionEntity
+import com.project9x.testtaskforobrio.data.local.ExchangeRateEntity
+import com.project9x.testtaskforobrio.data.local.TransactionEntity
+import org.json.JSONObject
 
 interface Repository {
 
@@ -9,9 +10,13 @@ interface Repository {
 
     suspend fun addTransaction(transactionEntity: TransactionEntity)
 
-    suspend fun getExchangeRate(): ExchangeRateEntity
+    suspend fun getExchangeRate(): ExchangeRateEntity?
+
+    suspend fun addExchangeRate(exchangeRateEntity: ExchangeRateEntity)
 
     suspend fun updateExchangeRate(exchangeRateEntity: ExchangeRateEntity)
+
+    suspend fun getExchangeRateRequest(): JSONObject
 
 
 

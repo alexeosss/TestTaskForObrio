@@ -112,7 +112,7 @@ fun PopUpDeposit(crossClick: () -> Unit, buttonClick: (String) -> Unit) {
                     text = stringResource(id = R.string.deposit),
                     textStyle = AppTheme.typography.h2
                 ) {
-                    if (depositValue.isNotEmpty() || depositValue.matches(pattern)) {
+                    if (depositValue.isNotEmpty() && depositValue.matches(pattern)) {
                         buttonClick.invoke(depositValue)
                     }
 

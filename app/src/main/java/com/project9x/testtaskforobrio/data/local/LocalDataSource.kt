@@ -1,4 +1,4 @@
-package com.project9x.testtaskforobrio.data.db
+package com.project9x.testtaskforobrio.data.local
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -16,7 +16,10 @@ interface LocalDataSource {
     fun addTransaction(transactionEntity: TransactionEntity)
 
     @Query("SELECT * FROM exchange_rate")
-    fun getTime(): ExchangeRateEntity
+    fun getTime(): ExchangeRateEntity?
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE, entity = ExchangeRateEntity::class)
+    fun addTime(exchangeRateEntity: ExchangeRateEntity)
 
     @Update(onConflict = OnConflictStrategy.IGNORE, entity = ExchangeRateEntity::class)
     fun updateTime(exchangeRateEntity: ExchangeRateEntity)
