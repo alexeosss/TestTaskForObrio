@@ -16,6 +16,8 @@ import com.project9x.testtaskforobrio.presentation.ui.theme.TestTaskTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
         setContent {
             TestTaskTheme {
 

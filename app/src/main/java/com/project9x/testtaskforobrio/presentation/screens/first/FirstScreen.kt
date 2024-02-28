@@ -29,6 +29,7 @@ import com.project9x.testtaskforobrio.presentation.components.ButtonWithText
 import com.project9x.testtaskforobrio.presentation.components.ExchangeRateCard
 import com.project9x.testtaskforobrio.presentation.components.PopUpDeposit
 import com.project9x.testtaskforobrio.presentation.components.TransactionHistoryComponent
+import com.project9x.testtaskforobrio.presentation.navigation.NavigationTree
 import com.project9x.testtaskforobrio.presentation.ui.theme.AppTheme
 
 @Composable
@@ -92,7 +93,7 @@ fun FirstScreen(navController: NavHostController) {
                     text = stringResource(id = R.string.add_transaction),
                     textStyle = AppTheme.typography.h2
                 ) {
-
+                    navController.navigate(NavigationTree.SecondScreen.name)
                 }
 
 
