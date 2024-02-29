@@ -8,11 +8,15 @@ import com.project9x.testtaskforobrio.data.local.ExchangeRateEntity
 import com.project9x.testtaskforobrio.data.local.TransactionEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,6 +40,23 @@ class FirstViewModel @Inject constructor(
             is FirstScreenEvent.GetTransactionAndBalance -> {
                 getTransactions()
             }
+
+            is FirstScreenEvent.UpdateScreenStates -> {
+                updateScreenStates()
+            }
+        }
+    }
+
+    private fun updateScreenStates() {
+        _uiState.update {
+            it.copy(
+                balance = null,
+                listOfTransactions = listOf<TransactionEntity>(),
+                page = 0,
+                depositCounter = 0,
+                isLoading = false,
+                isListNotFinished = true
+            )
         }
     }
 
@@ -74,7 +95,8 @@ class FirstViewModel @Inject constructor(
 
                     it2.copy(
                         balance = newBalance,
-                        listOfTransactions = newListOfTransactions
+                        listOfTransactions = newListOfTransactions,
+                        depositCounter = uiState.value.depositCounter + 1
                     )
                 }
             }
@@ -85,23 +107,58 @@ class FirstViewModel @Inject constructor(
 
     private fun getTransactions() {
 
+        _uiState.update {
+            it.copy(
+                isLoading = true
+            )
+        }
+
         viewModelScope.launch(Dispatchers.IO) {
-            val listOfTransactions = repository.getAllTransaction()
+            delay(1000)
 
-            if (listOfTransactions.isNotEmpty()) {
-                val balance = listOfTransactions.first().balance
+            val pageSize = 5
+            val listOfTransactionsFromDb = repository.getAllPageTransaction(
+                pageSize,
+                pageSize * uiState.value.page + uiState.value.depositCounter
+            )
 
+            if (listOfTransactionsFromDb.isEmpty()) {
                 _uiState.update {
                     it.copy(
-                        balance = balance,
-                        listOfTransactions = listOfTransactions
+                        isListNotFinished = false,
+                        isLoading = false
                     )
                 }
             } else {
-                _uiState.update {
-                    it.copy(
-                        balance = 0,
+                val listOfTransactions = uiState.value.listOfTransactions + listOfTransactionsFromDb
+
+
+                println(
+                    repository.getAllPageTransaction(
+                        pageSize,
+                        pageSize * uiState.value.page + uiState.value.depositCounter
                     )
+                )
+
+                if (listOfTransactions.isNotEmpty()) {
+                    val balance = listOfTransactions.first().balance
+
+                    _uiState.update {
+                        it.copy(
+                            balance = balance,
+                            listOfTransactions = listOfTransactions,
+                            isLoading = false,
+                            page = uiState.value.page + 1
+                        )
+                    }
+                } else {
+                    _uiState.update {
+                        it.copy(
+                            balance = 0,
+                            isLoading = false,
+                            page = uiState.value.page + 1
+                        )
+                    }
                 }
             }
 
@@ -166,17 +223,56 @@ class FirstViewModel @Inject constructor(
         ).bpi.USD.rate.split(".").first()
     }
 
+    private fun groupTransactionsByDate(listTransactions: List<TransactionEntity>): List<TransactionEntity> {
+        val newFormatTransactionList = mutableListOf<TransactionEntity>()
+
+        listTransactions.forEach {
+            if (newFormatTransactionList.contains(
+                    TransactionEntity(
+                        unixTime = 0L,
+                        category = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(
+                            Date(it.unixTime)
+                        ),
+                        total = "0",
+                        balance = 0
+                    )
+                )
+            ) {
+                newFormatTransactionList.add(1, it)
+            } else {
+                newFormatTransactionList.add(
+                    0, TransactionEntity(
+                        unixTime = 0L,
+                        category = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(
+                            Date(it.unixTime)
+                        ),
+                        total = "0",
+                        balance = 0
+                    )
+                )
+                newFormatTransactionList.add(1, it)
+            }
+        }
+
+        return newFormatTransactionList
+    }
+
 }
 
 data class FirstUiState(
     val balance: Int? = null,
     val listOfTransactions: List<TransactionEntity> = listOf<TransactionEntity>(),
-    val exchangeRate: String = ""
+    val exchangeRate: String = "",
+    val page: Int = 0,
+    val depositCounter: Int = 0,
+    val isLoading: Boolean = false,
+    val isListNotFinished: Boolean = true
 )
 
 sealed interface FirstScreenEvent {
 
     data object GetTransactionAndBalance : FirstScreenEvent
+    data object UpdateScreenStates : FirstScreenEvent
     class MakeDeposit(val depositValue: Int) : FirstScreenEvent
 }
 

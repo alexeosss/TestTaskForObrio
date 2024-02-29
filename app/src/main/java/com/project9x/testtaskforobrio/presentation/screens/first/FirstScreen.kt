@@ -8,8 +8,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -35,6 +38,9 @@ import com.project9x.testtaskforobrio.presentation.components.PopUpDeposit
 import com.project9x.testtaskforobrio.presentation.components.TransactionHistoryComponent
 import com.project9x.testtaskforobrio.presentation.navigation.NavigationTree
 import com.project9x.testtaskforobrio.presentation.ui.theme.AppTheme
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun FirstScreen(navController: NavHostController, vm: FirstViewModel = hiltViewModel()) {
@@ -45,9 +51,23 @@ fun FirstScreen(navController: NavHostController, vm: FirstViewModel = hiltViewM
         mutableStateOf(false)
     }
 
+    val scrollState = rememberLazyListState()
+
+    println(uiState.page)
+
     LaunchedEffect(key1 = Unit, block = {
-        vm.obtainEvent(FirstScreenEvent.GetTransactionAndBalance)
+        vm.obtainEvent(FirstScreenEvent.UpdateScreenStates)
     })
+
+    if (!scrollState.canScrollForward && uiState.isListNotFinished) {
+        LaunchedEffect(key1 = uiState.page, block = {
+            println("launch")
+            vm.obtainEvent(FirstScreenEvent.GetTransactionAndBalance)
+        })
+    }
+
+
+
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(
@@ -78,12 +98,20 @@ fun FirstScreen(navController: NavHostController, vm: FirstViewModel = hiltViewM
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text(
-                            text = uiState.balance.toString(),
-                            style = AppTheme.typography.h1,
-                            color = AppTheme.colors.primaryContentColor,
-                            textAlign = TextAlign.Center
-                        )
+                        if (uiState.balance == null) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp),
+                                strokeWidth = 1.dp,
+                                color = AppTheme.colors.primaryContentColor
+                            )
+                        } else {
+                            Text(
+                                text = uiState.balance.toString(),
+                                style = AppTheme.typography.h1,
+                                color = AppTheme.colors.primaryContentColor,
+                                textAlign = TextAlign.Center
+                            )
+                        }
                         Icon(
                             painter = painterResource(id = R.drawable.ic_btc),
                             null,
@@ -113,30 +141,28 @@ fun FirstScreen(navController: NavHostController, vm: FirstViewModel = hiltViewM
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth(), thickness = 1.dp, color = AppTheme.colors.secondaryContentColor
             )
-            LazyColumn(Modifier.weight(5f), horizontalAlignment = Alignment.CenterHorizontally) {
-//                item {
-//                    Text(
-//                        text = "27 february 2024",
-//                        style = AppTheme.typography.h3,
-//                        color = AppTheme.colors.secondaryContentColor,
-//                        textAlign = TextAlign.Center,
-//                        modifier = Modifier.padding(vertical = 10.dp)
-//                    )
-//                }
-//                items(5) {
-//                    TransactionHistoryComponent(
-//                        time = "12:30",
-//                        topic = "groceries",
-//                        amount = "+356 btc"
-//                    )
-//                }
-
+            LazyColumn(
+                Modifier.weight(5f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                state = scrollState,
+            ) {
                 items(uiState.listOfTransactions) {
                     TransactionHistoryComponent(
-                        time = it.unixTime.toString(),
+                        time = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(
+                            Date(it.unixTime)
+                        ),
                         topic = it.category,
                         amount = it.total
                     )
+                }
+                if (uiState.isLoading) {
+                    item {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            strokeWidth = 1.dp,
+                            color = AppTheme.colors.primaryContentColor
+                        )
+                    }
                 }
 
 
@@ -150,11 +176,12 @@ fun FirstScreen(navController: NavHostController, vm: FirstViewModel = hiltViewM
                     .fillMaxSize()
                     .clickable {
                         isPopUpDepositOpen = false
-                    }, contentAlignment = Alignment.Center) {
-                    PopUpDeposit(crossClick = { isPopUpDepositOpen = false }) {
-                        isPopUpDepositOpen = false
-                        vm.obtainEvent(FirstScreenEvent.MakeDeposit(depositValue = it.toInt()))
-                    }
+                    }, contentAlignment = Alignment.Center
+            ) {
+                PopUpDeposit(crossClick = { isPopUpDepositOpen = false }) {
+                    isPopUpDepositOpen = false
+                    vm.obtainEvent(FirstScreenEvent.MakeDeposit(depositValue = it.toInt()))
+                }
             }
         }
 

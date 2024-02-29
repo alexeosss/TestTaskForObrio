@@ -8,8 +8,8 @@ import androidx.room.Query
 @Dao
 interface LocalDataSource {
 
-    @Query("SELECT * FROM transaction_history")
-    fun getAllTransaction(): List<TransactionEntity>
+    @Query("SELECT * FROM transaction_history ORDER BY id DESC LIMIT :pageSize OFFSET :offset")
+    fun getAllPageTransaction(pageSize: Int, offset: Int): List<TransactionEntity>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE, entity = TransactionEntity::class)
     fun addTransaction(transactionEntity: TransactionEntity)

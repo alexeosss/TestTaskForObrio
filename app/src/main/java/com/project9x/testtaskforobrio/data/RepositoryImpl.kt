@@ -6,8 +6,8 @@ import com.project9x.testtaskforobrio.data.local.TransactionEntity
 import com.project9x.testtaskforobrio.data.remote.RemoteDataSource
 
 class RepositoryImpl(val localDataSource: LocalDataSource, val remoteDataSource: RemoteDataSource) : Repository {
-    override suspend fun getAllTransaction(): List<TransactionEntity> {
-        return localDataSource.getAllTransaction().reversed()
+    override suspend fun getAllPageTransaction(pageSize: Int, offset: Int): List<TransactionEntity> {
+        return localDataSource.getAllPageTransaction(pageSize, offset)
     }
 
     override suspend fun addTransaction(transactionEntity: TransactionEntity) {

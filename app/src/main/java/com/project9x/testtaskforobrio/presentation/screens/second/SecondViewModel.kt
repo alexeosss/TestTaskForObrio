@@ -25,7 +25,7 @@ class SecondViewModel @Inject constructor(
     private fun addTransaction(transactionAmount: String, categoryValue: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val unixTime = System.currentTimeMillis()
-            val newBalance = repository.getAllTransaction().first().balance - transactionAmount.toInt()
+            val newBalance = repository.getAllPageTransaction(1, 0).first().balance - transactionAmount.toInt()
 
             repository.addTransaction(
                 TransactionEntity(

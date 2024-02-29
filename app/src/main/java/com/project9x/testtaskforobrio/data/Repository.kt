@@ -6,7 +6,7 @@ import org.json.JSONObject
 
 interface Repository {
 
-    suspend fun getAllTransaction(): List<TransactionEntity>
+    suspend fun getAllPageTransaction(pageSize: Int, offset: Int): List<TransactionEntity>
 
     suspend fun addTransaction(transactionEntity: TransactionEntity)
 
