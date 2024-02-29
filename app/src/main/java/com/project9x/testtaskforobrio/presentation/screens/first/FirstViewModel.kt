@@ -95,7 +95,7 @@ class FirstViewModel @Inject constructor(
 
                     it2.copy(
                         balance = newBalance,
-                        listOfTransactions = newListOfTransactions,
+                        listOfTransactions = groupTransactionsByDate(newListOfTransactions),
                         depositCounter = uiState.value.depositCounter + 1
                     )
                 }
@@ -132,21 +132,13 @@ class FirstViewModel @Inject constructor(
             } else {
                 val listOfTransactions = uiState.value.listOfTransactions + listOfTransactionsFromDb
 
-
-                println(
-                    repository.getAllPageTransaction(
-                        pageSize,
-                        pageSize * uiState.value.page + uiState.value.depositCounter
-                    )
-                )
-
                 if (listOfTransactions.isNotEmpty()) {
-                    val balance = listOfTransactions.first().balance
+                    val balance = listOfTransactions[1].balance
 
                     _uiState.update {
                         it.copy(
                             balance = balance,
-                            listOfTransactions = listOfTransactions,
+                            listOfTransactions = groupTransactionsByDate(listOfTransactions),
                             isLoading = false,
                             page = uiState.value.page + 1
                         )
@@ -238,19 +230,21 @@ class FirstViewModel @Inject constructor(
                     )
                 )
             ) {
-                newFormatTransactionList.add(1, it)
+                newFormatTransactionList.add(it)
             } else {
-                newFormatTransactionList.add(
-                    0, TransactionEntity(
-                        unixTime = 0L,
-                        category = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(
-                            Date(it.unixTime)
-                        ),
-                        total = "0",
-                        balance = 0
+                if (it.unixTime != 0L){
+                    newFormatTransactionList.add(
+                        TransactionEntity(
+                            unixTime = 0L,
+                            category = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(
+                                Date(it.unixTime)
+                            ),
+                            total = "0",
+                            balance = 0
+                        )
                     )
-                )
-                newFormatTransactionList.add(1, it)
+                    newFormatTransactionList.add(it)
+                }
             }
         }
 

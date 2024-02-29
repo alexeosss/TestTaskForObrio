@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -147,13 +148,30 @@ fun FirstScreen(navController: NavHostController, vm: FirstViewModel = hiltViewM
                 state = scrollState,
             ) {
                 items(uiState.listOfTransactions) {
-                    TransactionHistoryComponent(
-                        time = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(
-                            Date(it.unixTime)
-                        ),
-                        topic = it.category,
-                        amount = it.total
-                    )
+                    if (it.unixTime == 0L){
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth().defaultMinSize(minHeight = 40.dp)
+                                .padding(horizontal = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = it.category,
+                                style = AppTheme.typography.h3,
+                                color = AppTheme.colors.secondaryContentColor,
+                                textAlign = TextAlign.Center
+                            )}
+                    }else{
+                        TransactionHistoryComponent(
+                            time = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(
+                                Date(it.unixTime)
+                            ),
+                            topic = it.category,
+                            amount = it.total
+                        )
+                    }
+
                 }
                 if (uiState.isLoading) {
                     item {
