@@ -25,16 +25,21 @@ class SecondViewModel @Inject constructor(
     private fun addTransaction(transactionAmount: String, categoryValue: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val unixTime = System.currentTimeMillis()
-            val newBalance = repository.getAllPageTransaction(1, 0).first().balance - transactionAmount.toInt()
+            try {
+                val newBalance = repository.getAllPageTransaction(1, 0)
+                    .first().balance - transactionAmount.toInt()
 
-            repository.addTransaction(
-                TransactionEntity(
-                    unixTime = unixTime,
-                    category = categoryValue,
-                    total = "-$transactionAmount btc",
-                    balance = newBalance
+                repository.addTransaction(
+                    TransactionEntity(
+                        unixTime = unixTime,
+                        category = categoryValue,
+                        total = "-$transactionAmount btc",
+                        balance = newBalance
+                    )
                 )
-            )
+            } catch (_: Exception) {
+            }
+
         }
 
     }

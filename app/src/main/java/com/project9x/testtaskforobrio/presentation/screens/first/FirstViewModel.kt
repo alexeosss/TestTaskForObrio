@@ -122,14 +122,20 @@ class FirstViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         isListNotFinished = false,
-                        isLoading = false
+                        isLoading = false,
+                        balance = if (uiState.value.balance == null) 0 else uiState.value.balance
                     )
                 }
             } else {
                 val listOfTransactions = uiState.value.listOfTransactions + listOfTransactionsFromDb
 
                 if (listOfTransactions.isNotEmpty()) {
-                    val balance = listOfTransactions[1].balance
+                    val balance = if (listOfTransactions[0].unixTime == 0L){
+                       listOfTransactions[1].balance
+                    }
+                    else{
+                       listOfTransactions[0].balance
+                    }
 
                     _uiState.update {
                         it.copy(
@@ -164,7 +170,7 @@ class FirstViewModel @Inject constructor(
 
                     _uiState.update {
                         it.copy(
-                            exchangeRate = "$rate"
+                            exchangeRate = rate
                         )
                     }
 
@@ -224,7 +230,7 @@ class FirstViewModel @Inject constructor(
             ) {
                 newFormatTransactionList.add(it)
             } else {
-                if (it.unixTime != 0L){
+                if (it.unixTime != 0L) {
                     newFormatTransactionList.add(
                         TransactionEntity(
                             unixTime = 0L,
