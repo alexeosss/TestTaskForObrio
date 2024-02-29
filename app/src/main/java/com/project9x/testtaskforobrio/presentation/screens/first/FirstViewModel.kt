@@ -8,12 +8,10 @@ import com.project9x.testtaskforobrio.data.local.ExchangeRateEntity
 import com.project9x.testtaskforobrio.data.local.TransactionEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -114,9 +112,7 @@ class FirstViewModel @Inject constructor(
         }
 
         viewModelScope.launch(Dispatchers.IO) {
-            delay(1000)
-
-            val pageSize = 5
+            val pageSize = 20
             val listOfTransactionsFromDb = repository.getAllPageTransaction(
                 pageSize,
                 pageSize * uiState.value.page + uiState.value.depositCounter
@@ -153,11 +149,7 @@ class FirstViewModel @Inject constructor(
                     }
                 }
             }
-
-
         }
-
-
     }
 
     private fun checkExchangeRate() {
@@ -264,7 +256,6 @@ data class FirstUiState(
 )
 
 sealed interface FirstScreenEvent {
-
     data object GetTransactionAndBalance : FirstScreenEvent
     data object UpdateScreenStates : FirstScreenEvent
     class MakeDeposit(val depositValue: Int) : FirstScreenEvent

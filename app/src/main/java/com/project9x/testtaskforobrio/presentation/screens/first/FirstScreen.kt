@@ -54,15 +54,12 @@ fun FirstScreen(navController: NavHostController, vm: FirstViewModel = hiltViewM
 
     val scrollState = rememberLazyListState()
 
-    println(uiState.page)
-
     LaunchedEffect(key1 = Unit, block = {
         vm.obtainEvent(FirstScreenEvent.UpdateScreenStates)
     })
 
     if (!scrollState.canScrollForward && uiState.isListNotFinished) {
         LaunchedEffect(key1 = uiState.page, block = {
-            println("launch")
             vm.obtainEvent(FirstScreenEvent.GetTransactionAndBalance)
         })
     }
@@ -148,10 +145,11 @@ fun FirstScreen(navController: NavHostController, vm: FirstViewModel = hiltViewM
                 state = scrollState,
             ) {
                 items(uiState.listOfTransactions) {
-                    if (it.unixTime == 0L){
+                    if (it.unixTime == 0L) {
                         Row(
                             modifier = Modifier
-                                .fillMaxWidth().defaultMinSize(minHeight = 40.dp)
+                                .fillMaxWidth()
+                                .defaultMinSize(minHeight = 40.dp)
                                 .padding(horizontal = 10.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center
@@ -161,8 +159,9 @@ fun FirstScreen(navController: NavHostController, vm: FirstViewModel = hiltViewM
                                 style = AppTheme.typography.h3,
                                 color = AppTheme.colors.secondaryContentColor,
                                 textAlign = TextAlign.Center
-                            )}
-                    }else{
+                            )
+                        }
+                    } else {
                         TransactionHistoryComponent(
                             time = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(
                                 Date(it.unixTime)
@@ -182,10 +181,7 @@ fun FirstScreen(navController: NavHostController, vm: FirstViewModel = hiltViewM
                         )
                     }
                 }
-
-
             }
-
         }
 
         if (isPopUpDepositOpen) {
