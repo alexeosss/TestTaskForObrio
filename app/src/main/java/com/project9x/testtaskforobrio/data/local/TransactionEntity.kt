@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 data class TransactionEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    var id: Int? = null,
+    var id: Int = 0,
 
     @ColumnInfo(name = "time")
     var unixTime: Long,

@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 data class ExchangeRateEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    var id: Int? = null,
+    var id: Int = 0,
 
     @ColumnInfo(name = "currency")
     var currency: String,
