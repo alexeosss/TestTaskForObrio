@@ -25,10 +25,6 @@ class FirstViewModel @Inject constructor(
     private val _uiState: MutableStateFlow<FirstUiState> = MutableStateFlow(FirstUiState())
     val uiState: StateFlow<FirstUiState> = _uiState
 
-    init {
-        checkExchangeRate()
-    }
-
     fun obtainEvent(event: FirstScreenEvent) {
         when (event) {
             is FirstScreenEvent.MakeDeposit -> {
@@ -41,6 +37,10 @@ class FirstViewModel @Inject constructor(
 
             is FirstScreenEvent.UpdateScreenStates -> {
                 updateScreenStates()
+            }
+
+            is FirstScreenEvent.CheckExchangeRate -> {
+                checkExchangeRate()
             }
         }
     }
@@ -130,11 +130,10 @@ class FirstViewModel @Inject constructor(
                 val listOfTransactions = uiState.value.listOfTransactions + listOfTransactionsFromDb
 
                 if (listOfTransactions.isNotEmpty()) {
-                    val balance = if (listOfTransactions[0].unixTime == 0L){
-                       listOfTransactions[1].balance
-                    }
-                    else{
-                       listOfTransactions[0].balance
+                    val balance = if (listOfTransactions[0].unixTime == 0L) {
+                        listOfTransactions[1].balance
+                    } else {
+                        listOfTransactions[0].balance
                     }
 
                     _uiState.update {
@@ -264,6 +263,7 @@ data class FirstUiState(
 sealed interface FirstScreenEvent {
     data object GetTransactionAndBalance : FirstScreenEvent
     data object UpdateScreenStates : FirstScreenEvent
+    data object CheckExchangeRate : FirstScreenEvent
     class MakeDeposit(val depositValue: Int) : FirstScreenEvent
 }
 

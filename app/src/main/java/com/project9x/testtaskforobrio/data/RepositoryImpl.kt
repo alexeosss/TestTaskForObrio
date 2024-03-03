@@ -5,7 +5,7 @@ import com.project9x.testtaskforobrio.data.local.LocalDataSource
 import com.project9x.testtaskforobrio.data.local.TransactionEntity
 import com.project9x.testtaskforobrio.data.remote.RemoteDataSource
 
-class RepositoryImpl(val localDataSource: LocalDataSource, val remoteDataSource: RemoteDataSource) : Repository {
+internal class RepositoryImpl(val localDataSource: LocalDataSource, val remoteDataSource: RemoteDataSource) : Repository {
     override suspend fun getAllPageTransaction(pageSize: Int, offset: Int): List<TransactionEntity> {
         return localDataSource.getAllPageTransaction(pageSize, offset)
     }

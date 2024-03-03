@@ -4,6 +4,6 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 
 @Database(entities = [TransactionEntity::class, ExchangeRateEntity::class], version = 1)
-abstract class LocalDB: RoomDatabase() {
+internal abstract class LocalDB: RoomDatabase() {
     abstract fun dao(): LocalDataSource
 }

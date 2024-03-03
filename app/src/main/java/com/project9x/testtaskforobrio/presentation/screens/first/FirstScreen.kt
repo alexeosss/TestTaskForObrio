@@ -56,6 +56,7 @@ fun FirstScreen(navController: NavHostController, vm: FirstViewModel = hiltViewM
 
     LaunchedEffect(key1 = Unit, block = {
         vm.obtainEvent(FirstScreenEvent.UpdateScreenStates)
+        vm.obtainEvent(FirstScreenEvent.CheckExchangeRate)
     })
 
     if (!scrollState.canScrollForward && uiState.isListNotFinished) {
