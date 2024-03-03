@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.project9x.testtaskforobrio.data.Repository
-import com.project9x.testtaskforobrio.data.local.ExchangeRateEntity
-import com.project9x.testtaskforobrio.data.local.TransactionEntity
+import com.project9x.testtaskforobrio.presentation.domain.ExchangeRate
+import com.project9x.testtaskforobrio.presentation.domain.Transaction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FirstViewModel @Inject constructor(
-    val repository: Repository
+    private val repository: Repository
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<FirstUiState> = MutableStateFlow(FirstUiState())
@@ -49,7 +49,7 @@ class FirstViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 balance = null,
-                listOfTransactions = listOf<TransactionEntity>(),
+                listOfTransactions = listOf(),
                 page = 0,
                 depositCounter = 0,
                 isLoading = false,
@@ -67,7 +67,7 @@ class FirstViewModel @Inject constructor(
             val newBalance = uiState.value.balance?.plus(depositValue)
 
             newBalance?.let {
-                TransactionEntity(
+                Transaction(
                     unixTime = unixTime,
                     category = "deposit",
                     total = "+$depositValue btc",
@@ -82,7 +82,7 @@ class FirstViewModel @Inject constructor(
                     val newListOfTransactions =
                         uiState.value.listOfTransactions.toMutableList().also { it3 ->
                             it3.add(
-                                0, TransactionEntity(
+                                0, Transaction(
                                     unixTime = unixTime,
                                     category = "deposit",
                                     total = "+$depositValue btc",
@@ -195,7 +195,7 @@ class FirstViewModel @Inject constructor(
                 }
 
                 repository.addExchangeRate(
-                    ExchangeRateEntity(
+                    ExchangeRate(
                         unixTime = unixTime,
                         rate = rate,
                         currency = "bitcoin"
@@ -212,12 +212,12 @@ class FirstViewModel @Inject constructor(
         ).bpi.USD.rate.split(".").first()
     }
 
-    private fun groupTransactionsByDate(listTransactions: List<TransactionEntity>): List<TransactionEntity> {
-        val newFormatTransactionList = mutableListOf<TransactionEntity>()
+    private fun groupTransactionsByDate(listTransactions: List<Transaction>): List<Transaction> {
+        val newFormatTransactionList = mutableListOf<Transaction>()
 
         listTransactions.forEach {
             if (newFormatTransactionList.contains(
-                    TransactionEntity(
+                    Transaction(
                         unixTime = 0L,
                         category = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(
                             Date(it.unixTime)
@@ -231,7 +231,7 @@ class FirstViewModel @Inject constructor(
             } else {
                 if (it.unixTime != 0L) {
                     newFormatTransactionList.add(
-                        TransactionEntity(
+                        Transaction(
                             unixTime = 0L,
                             category = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(
                                 Date(it.unixTime)
@@ -252,7 +252,7 @@ class FirstViewModel @Inject constructor(
 
 data class FirstUiState(
     val balance: Int? = null,
-    val listOfTransactions: List<TransactionEntity> = listOf<TransactionEntity>(),
+    val listOfTransactions: List<Transaction> = listOf(),
     val exchangeRate: String = "",
     val page: Int = 0,
     val depositCounter: Int = 0,

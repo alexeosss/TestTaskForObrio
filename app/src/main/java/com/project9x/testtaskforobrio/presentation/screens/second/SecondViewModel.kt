@@ -3,7 +3,7 @@ package com.project9x.testtaskforobrio.presentation.screens.second
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.project9x.testtaskforobrio.data.Repository
-import com.project9x.testtaskforobrio.data.local.TransactionEntity
+import com.project9x.testtaskforobrio.presentation.domain.Transaction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SecondViewModel @Inject constructor(
-    val repository: Repository
+    private val repository: Repository
 ) : ViewModel() {
 
     fun obtainEvent(event: SecondScreenEvent) {
@@ -30,7 +30,7 @@ class SecondViewModel @Inject constructor(
                     .first().balance - transactionAmount.toInt()
 
                 repository.addTransaction(
-                    TransactionEntity(
+                    Transaction(
                         unixTime = unixTime,
                         category = categoryValue,
                         total = "-$transactionAmount btc",
