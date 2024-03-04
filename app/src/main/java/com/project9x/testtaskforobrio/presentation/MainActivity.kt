@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.project9x.testtaskforobrio.presentation.navigation.Navigation
-import com.project9x.testtaskforobrio.presentation.screens.first.FirstScreen
 import com.project9x.testtaskforobrio.presentation.ui.theme.AppTheme
 import com.project9x.testtaskforobrio.presentation.ui.theme.TestTaskTheme
 import dagger.hilt.android.AndroidEntryPoint
