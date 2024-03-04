@@ -26,11 +26,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavHostController
 import com.project9x.testtaskforobrio.R
 import com.project9x.testtaskforobrio.presentation.components.ButtonWithText
@@ -42,6 +44,7 @@ import com.project9x.testtaskforobrio.presentation.ui.theme.AppTheme
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
 
 @Composable
 fun FirstScreen(navController: NavHostController, vm: FirstViewModel = hiltViewModel()) {
@@ -59,14 +62,26 @@ fun FirstScreen(navController: NavHostController, vm: FirstViewModel = hiltViewM
         vm.obtainEvent(FirstScreenEvent.CheckExchangeRate)
     })
 
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val lifecycleState by lifecycleOwner.lifecycle.currentStateFlow.collectAsState()
+
+    LaunchedEffect(lifecycleState) {
+        when (lifecycleState) {
+            Lifecycle.State.DESTROYED -> {}
+            Lifecycle.State.INITIALIZED -> {}
+            Lifecycle.State.CREATED -> {}
+            Lifecycle.State.STARTED -> {}
+            Lifecycle.State.RESUMED -> {
+                vm.obtainEvent(FirstScreenEvent.CheckExchangeRate)
+            }
+        }
+    }
+
     if (!scrollState.canScrollForward && uiState.isListNotFinished) {
         LaunchedEffect(key1 = uiState.page, block = {
             vm.obtainEvent(FirstScreenEvent.GetTransactionAndBalance)
         })
     }
-
-
-
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(
